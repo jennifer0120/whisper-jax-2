@@ -483,7 +483,6 @@ class FlaxWhisperPipline:
 
         detected_language = None
         for output in model_outputs:
-            print("!!!output: ", output)
             if "stride" in output:
                 chunk_len, stride_left, stride_right = output["stride"]
                 # Go back in seconds
@@ -493,13 +492,10 @@ class FlaxWhisperPipline:
                 output["stride"] = chunk_len, stride_left, stride_right
             token_ids = output["tokens"][0].tolist()
             for token in token_ids:
-                print("!!!token: ", token)
                 text = self.tokenizer.decode([token])
-                print("!!!text: ", text)
                 # removing outer shell |<XX>|
                 text = text[2:-2] 
                 language = LANGUAGES.get(text, None)
-                print("!!!language: ", language)
                 if language is not None:
                     detected_language = language
                     break
@@ -509,7 +505,7 @@ class FlaxWhisperPipline:
         text, optional = self.tokenizer._decode_asr(
             model_outputs,
             return_timestamps=return_timestamps,
-            return_language=return_language,
+            return_language=return_language or detected_language,
             time_precision=time_precision,
         )
         return {"text": text, "detected_language": detected_language, **optional}
