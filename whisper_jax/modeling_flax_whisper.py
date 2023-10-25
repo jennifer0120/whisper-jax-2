@@ -1532,7 +1532,7 @@ class FlaxWhisperForConditionalGeneration(FlaxWhisperPreTrainedModel):
         return_timestamps=None,
         task=None,
         language=None,
-        is_multilingual=False,
+        is_multilingual=None,
         **kwargs,
     ):
         if generation_config is None:

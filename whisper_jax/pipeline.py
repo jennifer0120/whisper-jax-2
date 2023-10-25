@@ -388,13 +388,31 @@ class FlaxWhisperPipline:
                 stride_right /= sampling_rate
                 output["stride"] = chunk_len, stride_left, stride_right
 
+        print("!!!output")
+        detected_language = None
+        for output in enumerate(model_outputs):
+            token_ids = output["tokens"][0].tolist()
+            for token in enumerate(token_ids):
+                if token in self.tokenizer.all_special_ids:
+                    print("!!!token: ", token)
+                    text = self.tokenizer.decode([token])
+                    print("!!!text: ", text)
+                    # removing outer shell |<XX>|
+                    text = text[2:-2] 
+                    language = self.tokenizer.LANGUAGES.get(text, None)
+                    print("!!!language: ", language)
+                    if language is not None:
+                        detected_language = language
+                        pass
+        print("!!!detected_language: ", detected_language)
+
         text, optional = self.tokenizer._decode_asr(
             model_outputs,
             return_timestamps=return_timestamps,
             return_language=return_language,
             time_precision=time_precision,
         )
-        return {"text": text, **optional}
+        return {"text": text, "detected_language": detected_language, **optional}
 
     def forward(self, model_inputs, batch_size=None, language=None, task=None, return_timestamps=False):
         # We need to keep track of some additional input arguments for post-processing so need to forward these on after running generation
