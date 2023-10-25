@@ -379,7 +379,10 @@ class FlaxWhisperPipline:
         time_precision = self.feature_extractor.chunk_length / self.model.config.max_source_positions
         # Send the chunking back to seconds, it's easier to handle in whisper
         sampling_rate = self.feature_extractor.sampling_rate
+
+        detected_language = None
         for output in model_outputs:
+            print("!!!output: ", output)
             if "stride" in output:
                 chunk_len, stride_left, stride_right = output["stride"]
                 # Go back in seconds
@@ -387,23 +390,19 @@ class FlaxWhisperPipline:
                 stride_left /= sampling_rate
                 stride_right /= sampling_rate
                 output["stride"] = chunk_len, stride_left, stride_right
-
-        print("!!!output")
-        detected_language = None
-        for output in enumerate(model_outputs):
             token_ids = output["tokens"][0].tolist()
-            for token in enumerate(token_ids):
-                if token in self.tokenizer.all_special_ids:
-                    print("!!!token: ", token)
-                    text = self.tokenizer.decode([token])
-                    print("!!!text: ", text)
-                    # removing outer shell |<XX>|
-                    text = text[2:-2] 
-                    language = self.tokenizer.LANGUAGES.get(text, None)
-                    print("!!!language: ", language)
-                    if language is not None:
-                        detected_language = language
-                        pass
+            for token in token_ids:
+                print("!!!token: ", token)
+                text = self.tokenizer.decode([token])
+                print("!!!text: ", text)
+                # removing outer shell |<XX>|
+                text = text[2:-2] 
+                language = self.tokenizer.LANGUAGES.get(text, None)
+                print("!!!language: ", language)
+                if language is not None:
+                    detected_language = language
+                    break
+
         print("!!!detected_language: ", detected_language)
 
         text, optional = self.tokenizer._decode_asr(
