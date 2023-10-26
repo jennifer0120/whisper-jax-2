@@ -499,8 +499,6 @@ class FlaxWhisperPipline:
                     detected_language = text
                     break
 
-        print("!!!detected_language: ", detected_language)
-
         text, optional = self.tokenizer._decode_asr(
             model_outputs,
             return_timestamps=return_timestamps,
