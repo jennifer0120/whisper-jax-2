@@ -494,10 +494,9 @@ class FlaxWhisperPipline:
             for token in token_ids:
                 text = self.tokenizer.decode([token])
                 # removing outer shell |<XX>|
-                text = text[2:-2] 
-                language = LANGUAGES.get(text, None)
-                if language is not None:
-                    detected_language = language
+                text = text[2:-2]
+                if text in LANGUAGES.keys():
+                    detected_language = text
                     break
 
         print("!!!detected_language: ", detected_language)
