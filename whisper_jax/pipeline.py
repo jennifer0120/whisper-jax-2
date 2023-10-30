@@ -491,13 +491,14 @@ class FlaxWhisperPipline:
                 stride_right /= sampling_rate
                 output["stride"] = chunk_len, stride_left, stride_right
             token_ids = output["tokens"][0].tolist()
-            for token in token_ids:
-                text = self.tokenizer.decode([token])
-                # removing outer shell |<XX>|
-                text = text[2:-2]
-                if text in LANGUAGES.keys():
-                    detected_language = text
-                    break
+            if not detected_language:
+                for token in token_ids:
+                    text = self.tokenizer.decode([token])
+                    # removing outer shell |<XX>|
+                    text = text[2:-2]
+                    if text in LANGUAGES.keys():
+                        detected_language = text
+                        break
 
         text, optional = self.tokenizer._decode_asr(
             model_outputs,
