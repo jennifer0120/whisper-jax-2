@@ -215,7 +215,7 @@ class FlaxWhisperPipline:
 
     def shard_params(self, num_mp_partitions=1, logical_axis_rules=logical_axis_rules_dp):
         def init_fn():
-            input_shape = (1, 80, 3000)
+            input_shape = (1, 40, 3000)
 
             input_features = jnp.zeros(input_shape, dtype="f4")
             input_features = input_features.at[(..., -1)].set(self.model.config.eos_token_id)
