@@ -507,6 +507,7 @@ class FlaxWhisperPipline:
             return_language=return_language or detected_language,
             time_precision=time_precision,
         )
+        print(optional)
         return {"text": text, "detected_language": detected_language, **optional}
 
     def forward(self, model_inputs, batch_size=None, language=None, task=None, return_timestamps=False):
@@ -608,11 +609,14 @@ class FlaxWhisperPipline:
         )
         model_outputs = []
         # iterate over our chunked audio samples
+        print(dataloader)
         for batch in dataloader:
             model_outputs.append(
                 self.forward(
                     batch, batch_size=batch_size, language=language, task=task, return_timestamps=return_timestamps
                 )
             )
+            print(model_outputs)
         post_processed = self.postprocess(model_outputs, return_timestamps=return_timestamps)
+        print(post_processed)
         return post_processed
