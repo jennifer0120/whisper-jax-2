@@ -23,7 +23,7 @@ from setuptools import find_packages, setup
 
 _deps = [
     "transformers==4.31.0",
-    "flax==0.7.0",
+    "flax==0.7.2",
 ]
 
 _extras_dev_deps = [
